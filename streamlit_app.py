@@ -16,6 +16,9 @@ def normalize_messages(messages):
         normalized.append(normalized_message)
     return normalized
 
+# Obtener clave API de secrets
+openai_api_key = st.secrets["openai"]["api_key"]
+
 # Mostrar título y descripción
 st.title("💬 Sofía, Asistente Virtual de la Agencia I-COMEX")
 st.write(
@@ -44,42 +47,37 @@ if "selected_topic" in st.session_state:
         st.error(f"No se encontró el archivo de instrucciones para {selected_topic}.")
         system_instructions = None
 
-    # Pedir al usuario su clave de API
-    openai_api_key = st.text_input("Código Secreto Agencia I-COMEX", type="password")
-    if not openai_api_key:
-        st.info("Pegá acá el código que Lauti te pasó para poder continuar.", icon="🗝️")
-    else:
-        # Crear un cliente de OpenAI
-        client = OpenAI(api_key=openai_api_key.encode("utf-8").decode("utf-8"))
+    # Crear un cliente de OpenAI con la clave API de secrets
+    client = OpenAI(api_key=openai_api_key)
 
-        # Inicializar los mensajes en `st.session_state`, incluyendo el mensaje del sistema
-        if "messages" not in st.session_state:
-            st.session_state.messages = []
-            if system_instructions:
-                st.session_state.messages.append({"role": "system", "content": system_instructions})
+    # Inicializar los mensajes en `st.session_state`, incluyendo el mensaje del sistema
+    if "messages" not in st.session_state:
+        st.session_state.messages = []
+        if system_instructions:
+            st.session_state.messages.append({"role": "system", "content": system_instructions})
 
-        # Mostrar solo los mensajes que no son del sistema
-        for message in st.session_state.messages:
-            if message["role"] != "system":
-                with st.chat_message(message["role"]):
-                    st.markdown(message["content"])
+    # Mostrar solo los mensajes que no son del sistema
+    for message in st.session_state.messages:
+        if message["role"] != "system":
+            with st.chat_message(message["role"]):
+                st.markdown(message["content"])
 
-        # Crear un campo de entrada para que el usuario envíe mensajes
-        if prompt := st.chat_input("Contame en qué te puedo ayudar..."):
-            # Guardar y mostrar el mensaje del usuario
-            st.session_state.messages.append({"role": "user", "content": prompt})
-            with st.chat_message("user"):
-                st.markdown(prompt)
+    # Crear un campo de entrada para que el usuario envíe mensajes
+    if prompt := st.chat_input("Contame en qué te puedo ayudar..."):
+        # Guardar y mostrar el mensaje del usuario
+        st.session_state.messages.append({"role": "user", "content": prompt})
+        with st.chat_message("user"):
+            st.markdown(prompt)
 
-            # Generar una respuesta usando la API de OpenAI
-            response = client.chat.completions.create(
-                model="gpt-4o-mini",
-                messages=normalize_messages(st.session_state.messages),
-                stream=True,
-                temperature=0.2
-            )
+        # Generar una respuesta usando la API de OpenAI
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=normalize_messages(st.session_state.messages),
+            stream=True,
+            temperature=0.2
+        )
 
-            # Mostrar la respuesta y guardarla en el estado de la sesión
-            with st.chat_message("assistant"):
-                response_content = st.write_stream(response)
-            st.session_state.messages.append({"role": "assistant", "content": response_content})
+        # Mostrar la respuesta y guardarla en el estado de la sesión
+        with st.chat_message("assistant"):
+            response_content = st.write_stream(response)
+        st.session_state.messages.append({"role": "assistant", "content": response_content})
