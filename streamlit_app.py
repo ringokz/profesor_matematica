@@ -35,17 +35,20 @@ def load_instructions(topic):
         st.error(f"No se encontró el archivo de instrucciones para {topic}.")
         return None
 
-# Renderizar el encabezado principal
+# Renderizar el encabezado (siempre visible)
 frontend.render_title()
 
-# Renderizar la introducción si no se ha seleccionado un tema
+# Renderizar subtítulo dinámico basado en el tema seleccionado
+if st.session_state.selected_topic:
+    full_subtitle = f"{st.session_state.selected_topic}"
+    frontend.render_subheader(full_subtitle)
+
+# Renderizar la introducción y botones solo si no se ha seleccionado un tema
 if st.session_state.selected_topic is None:
     frontend.render_intro()
 
-# Mostrar subtítulo, instrucciones y chat si se seleccionó un tema
+# Mostrar chat y mensajes si se seleccionó un tema
 if st.session_state.selected_topic:
-    frontend.render_subheader(st.session_state.selected_topic)
-
     # Cargar las instrucciones del sistema solo una vez
     if not st.session_state.initial_message_shown:
         instructions = load_instructions(st.session_state.selected_topic)
@@ -73,7 +76,6 @@ if st.session_state.selected_topic:
         client = OpenAI(api_key=openai_api_key)
 
         # Generar una respuesta usando OpenAI
-        # Generar una respuesta usando OpenAI
         response = client.chat.completions.create(
             model="gpt-4o-mini",
             messages=st.session_state.messages,
@@ -81,7 +83,7 @@ if st.session_state.selected_topic:
         )
 
         # Capturar y procesar la respuesta del asistente
-        response_content = response.choices[0].message.content  # Acceder al atributo directamente
+        response_content = response.choices[0].message.content
         with st.chat_message("assistant"):
             st.markdown(response_content)
         st.session_state.messages.append({"role": "assistant", "content": response_content})

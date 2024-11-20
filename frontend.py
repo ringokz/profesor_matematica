@@ -16,6 +16,12 @@ def render_custom_styles():
             .stApp {{
                 background-color: {BACKGROUND_COLOR};
             }}
+            .title {{
+                color: {PRIMARY_COLOR};
+                font-size: 2rem;
+                font-weight: bold;
+                margin-bottom: 0.5rem;
+            }}
             .stButton>button {{
                 background-color: {SECONDARY_COLOR};
                 color: white;
@@ -32,6 +38,17 @@ def render_custom_styles():
         """,
         unsafe_allow_html=True,
     )
+
+# Renderizar encabezado con logos lado a lado
+def render_title():
+    logo_col1, logo_col2 = st.columns([1, 5], gap="medium")
+    with logo_col1:
+        st.image(SOFIA_LOGO_PATH, use_container_width=True)
+    with logo_col2:
+        st.image(ICOMEX_LOGO_PATH, use_container_width=True)
+
+    # Título principal con color personalizado
+    st.markdown('<div class="title">Sofía, asistente virtual</div>', unsafe_allow_html=True)
 
 # Funciones de selección
 def select_investment():
@@ -51,15 +68,6 @@ def select_export():
         "Contame un poco más sobre lo que te gustaría saber."
     )
     st.session_state.initial_message_shown = False
-
-# Renderizar el encabezado principal
-def render_title():
-    st.image(ICOMEX_LOGO_PATH, use_container_width=True)
-    header_col1, header_col2 = st.columns([3, 1])
-    with header_col1:
-        st.title("Sofía, asistente virtual")
-    with header_col2:
-        st.image(SOFIA_LOGO_PATH, use_container_width=True)
 
 # Renderizar la introducción y los botones iniciales
 def render_intro():
