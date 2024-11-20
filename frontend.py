@@ -1,4 +1,5 @@
 import streamlit as st
+import time
 
 # Paleta de colores y rutas de los logos
 PRIMARY_COLOR = "#4b83c0"
@@ -50,6 +51,57 @@ def render_title():
     # Título principal con color personalizado
     st.markdown('<div class="title">Sofía, asistente virtual</div>', unsafe_allow_html=True)
 
+# Renderizar subtítulo con efecto de escritura
+def render_subheader(topic):
+    container = st.empty()  # Crear un contenedor vacío para el texto dinámico
+    text = topic.capitalize()
+    displayed_text = ""
+    for char in text:
+        displayed_text += char
+        container.subheader(displayed_text)  # Actualizar el contenedor
+        time.sleep(0.0)  # Retardo para el efecto de escritura
+
+# Renderizar mensajes con efecto de escritura
+def render_messages(messages):
+    for message in messages:
+        if message["role"] != "system":  # Ignorar mensajes del sistema
+            with st.chat_message(message["role"]):
+                container = st.empty()
+                text = message["content"]
+                displayed_text = ""
+                for char in text:
+                    displayed_text += char
+                    container.markdown(displayed_text)  # Actualizar el texto dinámicamente
+                    time.sleep(0.02)  # Retardo para el efecto de escritura
+
+# Renderizar la introducción y los botones iniciales
+def render_intro():
+    st.markdown(
+        """
+        Soy **Sofía**, el agente de IA de la Agencia I-COMEX. Estoy aquí para ayudarte con tus preguntas
+        sobre comercio exterior e inversiones en La Pampa.
+
+        ¿Sobre qué tema necesitás ayuda?
+        """
+    )
+
+    # Botones con funciones de devolución de llamada (sin retardo)
+    btn_col1, btn_col2 = st.columns(2, gap="large")
+    btn_col1.button(
+        "Oportunidades de Inversión", 
+        key="intro_inversiones", 
+        on_click=select_investment
+    )
+    btn_col2.button(
+        "Exportación de Servicios", 
+        key="intro_comercio", 
+        on_click=select_export
+    )
+
+# Renderizar campo de entrada
+def render_input():
+    return st.chat_input("Escribe tu mensaje aquí...")
+
 # Funciones de selección
 def select_investment():
     st.session_state.selected_topic = "Oportunidades de Inversión"
@@ -69,40 +121,18 @@ def select_export():
     )
     st.session_state.initial_message_shown = False
 
-# Renderizar la introducción y los botones iniciales
-def render_intro():
-    st.markdown(
-        """
-        Soy **Sofía**, el agente de IA de la Agencia I-COMEX. Estoy aquí para ayudarte con tus preguntas
-        sobre comercio exterior e inversiones en La Pampa.
+def render_dynamic_message(message, avatar=None):
+    if message["role"] == "assistant":  # Asegurar que solo el asistente use animación
+        with st.chat_message(message["role"], avatar=avatar):
+            container = st.empty()
+            text = message["content"]
+            displayed_text = ""
+            for char in text:
+                displayed_text += char
+                container.markdown(displayed_text)
+                time.sleep(0.005)
 
-        ¿Sobre qué tema necesitás ayuda?
-        """
-    )
-
-    # Botones con funciones de devolución de llamada
-    btn_col1, btn_col2 = st.columns(2, gap="large")
-    inversiones_btn = btn_col1.button(
-        "Oportunidades de Inversión", 
-        key="intro_inversiones", 
-        on_click=select_investment
-    )
-    comercio_btn = btn_col2.button(
-        "Exportación de Servicios", 
-        key="intro_comercio", 
-        on_click=select_export
-    )
-
-# Renderizar subtítulo
-def render_subheader(topic):
-    st.subheader(topic.capitalize())
-
-# Renderizar mensajes
-def render_messages(messages):
-    for message in messages:
-        with st.chat_message(message["role"]):
-            st.markdown(message["content"])
-
-# Renderizar campo de entrada
-def render_input():
-    return st.chat_input("Escribe tu mensaje aquí...")
+# Renderizar mensaje estático con avatar
+def render_chat_message(role, content, avatar=None):
+    with st.chat_message(role, avatar=avatar):
+        st.markdown(content)

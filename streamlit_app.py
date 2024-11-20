@@ -1,13 +1,23 @@
 import streamlit as st
 import frontend
 from openai import OpenAI
+from PIL import Image
 
 # Configuración de la página
-SOFIA_LOGO_PATH = "logos/SofIA sin fondo.png"
-st.set_page_config(page_title="Sofía - Asistente Virtual", layout="centered", page_icon=SOFIA_LOGO_PATH)
+SOFIA_LOGO_PATH = "logos/sofia avatar.png"
+USER_LOGO_PATH = "logos/user avatar.png"
+st.set_page_config(page_title="Sofía - Asistente de IA", layout="centered", page_icon=SOFIA_LOGO_PATH)
 
 # Inicializar estilos personalizados
 frontend.render_custom_styles()
+
+# Cachear las imágenes
+@st.cache_data
+def load_image(image_path):
+    return Image.open(image_path)
+
+sofia_logo = load_image(SOFIA_LOGO_PATH)
+user_logo = load_image(USER_LOGO_PATH)
 
 # Inicialización del estado
 if "selected_topic" not in st.session_state:
@@ -16,6 +26,10 @@ if "messages" not in st.session_state:
     st.session_state.messages = []
 if "initial_message_shown" not in st.session_state:
     st.session_state.initial_message_shown = False
+if "subtitle_shown" not in st.session_state:
+    st.session_state.subtitle_shown = False
+if "rendered_message_ids" not in st.session_state:
+    st.session_state.rendered_message_ids = set()  # Para rastrear mensajes ya renderizados
 
 # Archivos de instrucciones del sistema
 INSTRUCTIONS_FILES = {
@@ -40,8 +54,11 @@ frontend.render_title()
 
 # Renderizar subtítulo dinámico basado en el tema seleccionado
 if st.session_state.selected_topic:
-    full_subtitle = f"{st.session_state.selected_topic}"
-    frontend.render_subheader(full_subtitle)
+    if not st.session_state.subtitle_shown:
+        frontend.render_subheader(st.session_state.selected_topic)
+        st.session_state.subtitle_shown = True
+    else:
+        st.subheader(st.session_state.selected_topic.capitalize())
 
 # Renderizar la introducción y botones solo si no se ha seleccionado un tema
 if st.session_state.selected_topic is None:
@@ -53,24 +70,33 @@ if st.session_state.selected_topic:
     if not st.session_state.initial_message_shown:
         instructions = load_instructions(st.session_state.selected_topic)
         if instructions:
-            # Agregar el mensaje del sistema solo para el contexto del LLM
             st.session_state.messages.append({"role": "system", "content": instructions})
-        # Agregar el mensaje inicial del asistente para la interfaz
         st.session_state.messages.append({"role": "assistant", "content": st.session_state.initial_message})
         st.session_state.initial_message_shown = True
 
-    # Renderizar los mensajes, filtrando los mensajes del sistema
-    for message in st.session_state.messages:
-        if message["role"] != "system":  # Ignorar mensajes del sistema
-            with st.chat_message(message["role"]):
-                st.markdown(message["content"])
+    # Renderizar mensajes existentes
+    for i, message in enumerate(st.session_state.messages):
+        if message["role"] != "system":
+            message_id = f"{message['role']}-{i}"
+            if message_id not in st.session_state.rendered_message_ids:
+                if message["role"] == "assistant":
+                    # Renderizar dinámicamente los nuevos mensajes del asistente con avatar
+                    frontend.render_dynamic_message(message, avatar=sofia_logo)
+                else:
+                    # Renderizar estáticamente los mensajes del usuario con avatar
+                    frontend.render_chat_message(message["role"], message["content"], avatar=user_logo)
+                # Marcar el mensaje como renderizado
+                st.session_state.rendered_message_ids.add(message_id)
+            else:
+                # Mostrar mensajes ya renderizados
+                frontend.render_chat_message(message["role"], message["content"], 
+                                             avatar=sofia_logo if message["role"] == "assistant" else user_logo)
 
     # Renderizar el campo de entrada
     if prompt := frontend.render_input():
         # Agregar el mensaje del usuario
         st.session_state.messages.append({"role": "user", "content": prompt})
-        with st.chat_message("user"):
-            st.markdown(prompt)
+        frontend.render_chat_message("user", prompt, avatar=user_logo)
 
         # Crear un cliente de OpenAI
         client = OpenAI(api_key=openai_api_key)
@@ -84,6 +110,10 @@ if st.session_state.selected_topic:
 
         # Capturar y procesar la respuesta del asistente
         response_content = response.choices[0].message.content
-        with st.chat_message("assistant"):
-            st.markdown(response_content)
-        st.session_state.messages.append({"role": "assistant", "content": response_content})
+        response_message = {"role": "assistant", "content": response_content}
+        st.session_state.messages.append(response_message)
+
+        # Renderizar dinámicamente la nueva respuesta del asistente
+        frontend.render_dynamic_message(response_message, avatar=sofia_logo)
+        # Marcar el mensaje como renderizado
+        st.session_state.rendered_message_ids.add(f"assistant-{len(st.session_state.messages) - 1}")
