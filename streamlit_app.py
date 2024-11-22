@@ -105,7 +105,7 @@ if st.session_state.selected_topic:
         response = client.chat.completions.create(
             model="gpt-4o-mini",
             messages=st.session_state.messages,
-            temperature=0.2
+            temperature=0
         )
 
         # Capturar y procesar la respuesta del asistente

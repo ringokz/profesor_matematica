@@ -6,4 +6,5 @@ textColor = "#000000"
 font= "fira sans"
 
 [theme.userSettings]
-base = "custom"     
+base = "custom"
+
