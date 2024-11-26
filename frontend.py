@@ -17,31 +17,45 @@ def render_custom_styles():
             .stApp {{
                 background-color: {BACKGROUND_COLOR};
             }}
+            .stSidebar {{
+                background-color: #f0f0f0; /* Light gray background */
+                border-right: 1px solid {SECONDARY_COLOR}; /* Separator */
+            }}
+            input {{
+                border: 1px solid {SECONDARY_COLOR}; /* Input border color */
+                border-radius: 5px; /* Rounded corners */
+                padding: 8px;
+            }}
+            textarea {{
+                border: 1px solid {SECONDARY_COLOR}; /* Textarea border color */
+                border-radius: 5px; /* Rounded corners */
+                padding: 8px;
+            }}
             .title {{
                 color: {PRIMARY_COLOR};
-                font-size: 2rem;
+                font-size: 2.5rem;
                 font-weight: bold;
-                margin-bottom: 0.5rem;
+                margin-bottom: 0rem;
             }}
             .intro-text {{
-                font-size: 1.3rem;
+                font-size: 1.35rem;
                 line-height: 1.6;  /* Ajustar espaciado entre líneas */
-                margin-bottom: 2rem;
+                margin-bottom: 0rem;
                 text-align: justify; /* Justificar texto */
             }}
             .intro-question {{
-                font-size: 1.6rem;
+                font-size: 1.5rem;
                 font-weight: bold;
                 text-align: center;
-                margin-bottom: 2rem;
+                margin-bottom: 1rem;
             }}
             .stButton>button {{
                 background-color: {SECONDARY_COLOR};
                 color: white;
                 border: none;
                 border-radius: 10px;
-                padding: 12px 24px; /* Incremento en tamaño */
-                font-size: 19px; /* 20% más grande */
+                padding: 12px 24px;
+                font-size: 30px !important;
                 transition: background-color 0.3s ease;
             }}
             .stButton>button:hover {{
@@ -59,14 +73,27 @@ def render_custom_styles():
         unsafe_allow_html=True,
     )
 
-# Renderizar encabezado con logos lado a lado
+
+# Render the title with centered logos
 def render_title():
-    logo_col1, logo_col2 = st.columns([1, 5], gap="medium")
+    # Create columns with relative proportions
+    logo_col1, logo_col2 = st.columns([1, 4], gap="medium", vertical_alignment="center")
+
+    # Add images to the columns and center them
     with logo_col1:
-        st.image(SOFIA_LOGO_PATH, use_container_width=True)
+        # Center the image in the column
+        with st.container():
+            st.image(SOFIA_LOGO_PATH, use_container_width=True)
     with logo_col2:
-        st.image(ICOMEX_LOGO_PATH, use_container_width=True)
-    st.markdown('<div class="title">Sofía, asistente virtual</div>', unsafe_allow_html=True)
+        # Center the image in the column
+        with st.container():
+            st.image(ICOMEX_LOGO_PATH, use_container_width=True)
+
+    # Add a title below the logos, centered
+    st.markdown(
+        '<div class="title";">SofIA, asesora virtual</div>',
+        unsafe_allow_html=True,
+    )
 
 # Renderizar subtítulo con efecto de escritura
 def render_subheader(topic):
@@ -96,8 +123,8 @@ def render_intro():
     st.markdown(
         """
         <div class="intro-text">
-        Soy <b>Sofía</b>, el agente de inteligencia artificial de la Agencia I-COMEX. 
-        Estoy aquí para brindarle soporte con sus consultas sobre comercio exterior e inversiones en La Pampa.
+        Soy <b>SofIA</b>, la asesora virtual de IA de la Agencia I-COMEX.
+        Estoy aquí para asesorarte sobre comercio exterior y las potencialidades de inversión en La Pampa.
         </div>
         <div class="intro-question">
         ¿Sobre qué tema puedo ser de ayuda?
@@ -110,14 +137,14 @@ def render_intro():
     btn_col1, btn_col2 = st.columns(2, gap="medium")
     with btn_col1:
         st.button(
-            "Oportunidades de Inversión",
+            "**Oportunidades de Inversión**",
             key="intro_inversiones",
             on_click=select_investment,  # Conecta el callback
             use_container_width=True,
         )
     with btn_col2:
         st.button(
-            "Exportación de Servicios",
+            "**Exportación de Servicios**",
             key="intro_comercio",
             on_click=select_export,  # Conecta el callback
             use_container_width=True,
@@ -131,7 +158,7 @@ def render_input():
 def select_investment():
     st.session_state.selected_topic = "Oportunidades de Inversión"
     st.session_state.initial_message = (
-        "¡Hola! Soy Sofía, la asistente virtual de I-COMEX 😊. "
+        "¡Hola! Soy Sofía, la asesora virtual de I-COMEX 😊. "
         "Parece que te interesan las oportunidades de inversión en La Pampa. "
         "Decime, ¿hay algo en particular que quisieras saber?"
     )
@@ -140,7 +167,7 @@ def select_investment():
 def select_export():
     st.session_state.selected_topic = "Exportación de Servicios"
     st.session_state.initial_message = (
-        "¡Hola! Soy Sofía, la asistente virtual de I-COMEX 😊. "
+        "¡Hola! Soy Sofía, la asesora virtual de I-COMEX 😊. "
         "¿Estás planificando exportar tus servicios? "
         "Contame cómo te puedo ayudar o que te gustaría saber."
     )
@@ -161,3 +188,15 @@ def render_dynamic_message(message, avatar=None):
 def render_chat_message(role, content, avatar=None):
     with st.chat_message(role, avatar=avatar):
         st.markdown(content)
+
+def render_input_and_button():
+    # Place input and button in a single row
+    input_container = st.container()
+    with input_container:
+        col1, col2 = st.columns([4, 1], gap="small")
+        with col1:
+            user_input = st.chat_input("Escribe tu mensaje aquí...")
+        with col2:
+            if st.button("Obtener Conversación", use_container_width=True):
+                st.session_state.get_conversation_triggered = True
+    return user_input

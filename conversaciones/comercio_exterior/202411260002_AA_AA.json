@@ -1,0 +1,12 @@
+{
+    "name": "aa",
+    "last_name": "aa",
+    "email": "aa",
+    "topic": "Exportación de Servicios",
+    "messages": [
+        {
+            "role": "assistant",
+            "content": "¡Hola! Soy Sofía, la asesora virtual de I-COMEX 😊. ¿Estás planificando exportar tus servicios? Contame cómo te puedo ayudar o que te gustaría saber."
+        }
+    ]
+}

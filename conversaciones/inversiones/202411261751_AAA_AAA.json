@@ -1,0 +1,12 @@
+{
+    "name": "AAA",
+    "last_name": "AAA",
+    "email": "AAA",
+    "topic": "Oportunidades de Inversión",
+    "messages": [
+        {
+            "role": "assistant",
+            "content": "¡Hola! Soy Sofía, la asesora virtual de I-COMEX 😊. Parece que te interesan las oportunidades de inversión en La Pampa. Decime, ¿hay algo en particular que quisieras saber?"
+        }
+    ]
+}

@@ -1,0 +1,20 @@
+{
+    "name": "Lautaro Tomás",
+    "last_name": "Casetta",
+    "email": "lautikz@gmail.com",
+    "topic": "Oportunidades de Inversión",
+    "messages": [
+        {
+            "role": "assistant",
+            "content": "¡Hola! Soy Sofía, la asesora virtual de I-COMEX 😊. Parece que te interesan las oportunidades de inversión en La Pampa. Decime, ¿hay algo en particular que quisieras saber?"
+        },
+        {
+            "role": "user",
+            "content": "´prba"
+        },
+        {
+            "role": "assistant",
+            "content": "Parece que hubo un error en tu mensaje. Si tenés alguna consulta específica sobre las oportunidades de inversión en La Pampa, no dudes en decírmelo. Estoy aquí para ayudarte."
+        }
+    ]
+}
