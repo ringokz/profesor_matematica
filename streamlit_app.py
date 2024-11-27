@@ -97,7 +97,10 @@ if st.session_state.selected_topic:
         response = client.chat.completions.create(
             model="gpt-4o-mini",
             messages=st.session_state.messages,
-            temperature=0
+            temperature=0.3,       
+            top_p=0.1,             
+            frequency_penalty=0.2, 
+            presence_penalty=0.2   
         )
         response_content = response.choices[0].message.content
         response_message = {"role": "assistant", "content": response_content}
