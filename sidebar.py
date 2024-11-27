@@ -54,7 +54,7 @@ def toggle_audio_button():
         st.session_state.audio_enabled = False
 
     # Texto dinámico para el botón
-    button_text = "Activar Generación de Audio" if not st.session_state.audio_enabled else "Desactivar Generación de Audio"
+    button_text = "Activar / Desactivar Audio"
 
     # Renderizar el botón
     if st.button(button_text):
@@ -62,8 +62,8 @@ def toggle_audio_button():
         st.session_state.audio_enabled = not st.session_state.audio_enabled
 
     # Mostrar el estado actual
-    status = "activada" if st.session_state.audio_enabled else "desactivada"
-    st.write(f"Generación de audio está  **{status}**.")
+    status = "activado" if st.session_state.audio_enabled else "desactivado"
+    st.write(f"Audio **{status}**.")
 
 # Limpia un mensaje para asegurar que sea apto para texto a voz
 def clean_message(message_content):
@@ -74,7 +74,7 @@ def clean_message(message_content):
     # Remove all "#" characters
     message_content = message_content.replace("#", "")
     # Replace line breaks with spaces
-    message_content = message_content.replace("\n", " ")
+    message_content = message_content.replace(":", ".")
     return message_content
 
 
