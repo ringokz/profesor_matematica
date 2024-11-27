@@ -47,6 +47,37 @@ def generate_pdf(html_content, output_path):
             return False, pisa_status.err
     return True, None
 
+# Botón para activar/desactivar la generación de audio
+def toggle_audio_button():
+    # Inicializar el estado si no existe
+    if "audio_enabled" not in st.session_state:
+        st.session_state.audio_enabled = False
+
+    # Texto dinámico para el botón
+    button_text = "Activar Generación de Audio" if not st.session_state.audio_enabled else "Desactivar Generación de Audio"
+
+    # Renderizar el botón
+    if st.button(button_text):
+        # Cambiar el estado al presionar el botón
+        st.session_state.audio_enabled = not st.session_state.audio_enabled
+
+    # Mostrar el estado actual
+    status = "activada" if st.session_state.audio_enabled else "desactivada"
+    st.write(f"Generación de audio está  **{status}**.")
+
+# Limpia un mensaje para asegurar que sea apto para texto a voz
+def clean_message(message_content):
+    # Remove Markdown bold (**text** -> text)
+    message_content = re.sub(r"\*\*(.*?)\*\*", r"\1", message_content)
+    # Remove emojis
+    message_content = emoji.replace_emoji(message_content, replace="")
+    # Remove all "#" characters
+    message_content = message_content.replace("#", "")
+    # Replace line breaks with spaces
+    message_content = message_content.replace("\n", " ")
+    return message_content
+
+
 # Save conversation form
 def save_conversation_form():
     with st.sidebar.form("guardar_conversacion"):

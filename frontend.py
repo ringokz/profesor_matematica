@@ -116,7 +116,7 @@ def render_messages(messages):
                 for char in text:
                     displayed_text += char
                     container.markdown(displayed_text)
-                    time.sleep(0.02)
+                    time.sleep(0.002)
 
 # Renderizar la introducción y los botones iniciales
 def render_intro():
@@ -182,21 +182,9 @@ def render_dynamic_message(message, avatar=None):
             for char in text:
                 displayed_text += char
                 container.markdown(displayed_text)
-                time.sleep(0.005)
+                time.sleep(0.0005)
 
 # Renderizar mensaje estático con avatar
 def render_chat_message(role, content, avatar=None):
     with st.chat_message(role, avatar=avatar):
         st.markdown(content)
-
-def render_input_and_button():
-    # Place input and button in a single row
-    input_container = st.container()
-    with input_container:
-        col1, col2 = st.columns([4, 1], gap="small")
-        with col1:
-            user_input = st.chat_input("Escribe tu mensaje aquí...")
-        with col2:
-            if st.button("Obtener Conversación", use_container_width=True):
-                st.session_state.get_conversation_triggered = True
-    return user_input

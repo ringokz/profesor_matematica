@@ -3,11 +3,14 @@ import frontend
 from openai import OpenAI
 from PIL import Image
 import sidebar
+import requests
+import tempfile
+from sidebar import clean_message 
 
 # Configuración de la página
 PRIMARY_COLOR = "#4b83c0"
 SECONDARY_COLOR = "#878889"
-BACKGROUND_COLOR = "#ffffff"  # Changed background to white
+BACKGROUND_COLOR = "#ffffff"
 
 ICOMEX_LOGO_PATH = "logos/ICOMEX_Logos sin fondo.png"
 SOFIA_AVATAR_PATH = "logos/sofia_avatar.png"
@@ -45,12 +48,41 @@ frontend.render_title()
 # Sidebar with a button to toggle form
 with st.sidebar:
     if st.session_state.selected_topic:
+        sidebar.toggle_audio_button()  # Llama a la función para el botón
+    if st.session_state.selected_topic:
         if st.button("Enviar conversación por correo"):
             st.session_state.show_form = True
 
 # Render the form if enabled
 if st.session_state.show_form:
     sidebar.save_conversation_form()
+
+# Función para generar audio con Eleven Labs
+def generar_audio_elevenlabs(texto, voice_id="vqoh9orw2tmOS3mY7D2p"):
+    url = f"https://api.elevenlabs.io/v1/text-to-speech/{voice_id}"
+    headers = {
+        "Accept": "audio/mpeg",
+        "Content-Type": "application/json",
+        "xi-api-key": st.secrets["elevenlabs"]["api_key"]
+    }
+    data = {
+        "text": texto,
+        "model_id": "eleven_turbo_v2_5",
+        "voice_settings": {
+            "stability": 0.9,
+            "similarity_boost": 0.8
+        }
+    }
+    
+    response = requests.post(url, json=data, headers=headers)
+    if response.status_code == 200:
+        temp_audio = tempfile.NamedTemporaryFile(delete=False, suffix=".mp3")
+        with open(temp_audio.name, "wb") as audio_file:
+            audio_file.write(response.content)
+        return temp_audio.name
+    else:
+        st.error(f"Error al generar audio: {response.status_code}, {response.text}")
+        return None
 
 # Renderizar subtítulo dinámico basado en el tema seleccionado
 if st.session_state.selected_topic:
@@ -105,5 +137,15 @@ if st.session_state.selected_topic:
         response_content = response.choices[0].message.content
         response_message = {"role": "assistant", "content": response_content}
         st.session_state.messages.append(response_message)
+
+        # Renderizar el mensaje del chatbot
         frontend.render_dynamic_message(response_message, avatar=sofia_logo)
         st.session_state.rendered_message_ids.add(f"assistant-{len(st.session_state.messages) - 1}")
+
+        # Generar y reproducir audio
+        if st.session_state.audio_enabled:
+            # Limpiar el texto antes de enviarlo a Eleven Labs
+            texto_limpio = clean_message(response_content)
+            audio_path = generar_audio_elevenlabs(texto_limpio)
+            if audio_path:
+                st.audio(audio_path, format="audio/mp3")
