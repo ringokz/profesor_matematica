@@ -67,6 +67,14 @@ def toggle_audio_button():
 
 # Limpia un mensaje para asegurar que sea apto para texto a voz
 def clean_message_for_audio(message_content):
+    # Replace for pronunciation
+    message_content = message_content.replace("I-COMEX","ICÓMEX")
+    message_content = message_content.replace("km","kilómetros")
+    message_content = message_content.replace("1950", "mil novecientos cincuenta")
+    message_content = message_content.replace("2954575326", "dos nueve cinco cuatro, cincuenta y siete, cincuenta y tres, veintiseis.")
+    message_content = message_content.replace("agencia@icomexlapampa.org","agencia, arroba, icomexlapampa, punto, org.")
+    message_content = message_content.replace("08:00 a 15:00 hs","ocho a quince horas")
+    message_content = message_content.replace("https://maps.app.goo.gl/RET62U9mK9JecpmT9","")
     # Remove Markdown bold (**text** -> text)
     message_content = re.sub(r"\*\*(.*?)\*\*", r"\1", message_content)
     # Remove emojis
@@ -75,13 +83,6 @@ def clean_message_for_audio(message_content):
     message_content = message_content.replace("#", "")
     # Replace line breaks with spaces
     message_content = message_content.replace(":", ".")
-    # Replace for pronunciation
-    message_content = message_content.replace("km","kilómetros")
-    message_content = message_content.replace("1950", "mil novecientos cincuenta")
-    message_content = message_content.replace("2954575326", "dos nueve cinco cuatro, cincuenta y siete, cincuenta y tres, veintiseis.")
-    message_content = message_content.replace("agencia@icomexlapampa.org","agencia, arroba, icomexlapampa, punto, org.")
-    message_content = message_content.replace("08.00 a 15.00 hs","ocho en punto a quince horas")
-    message_content = message_content.replace("https.//maps.app.goo.gl/RET62U9mK9JecpmT9","")
     return message_content
 
 # Limpia un mensaje para asegurar que sea apto para texto a voz
