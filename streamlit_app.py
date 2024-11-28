@@ -3,9 +3,9 @@ import frontend
 from openai import OpenAI
 from PIL import Image
 import sidebar
-import requests
 import tempfile
-from sidebar import clean_message 
+from sidebar import clean_message_for_audio
+from elevenlabs import ElevenLabs
 
 # Configuración de la página
 PRIMARY_COLOR = "#4b83c0"
@@ -57,31 +57,32 @@ with st.sidebar:
 if st.session_state.show_form:
     sidebar.save_conversation_form()
 
-# Función para generar audio con Eleven Labs
-def generar_audio_elevenlabs(texto, voice_id="vqoh9orw2tmOS3mY7D2p"):
-    url = f"https://api.elevenlabs.io/v1/text-to-speech/{voice_id}"
-    headers = {
-        "Accept": "audio/mpeg",
-        "Content-Type": "application/json",
-        "xi-api-key": st.secrets["elevenlabs"]["api_key"]
-    }
-    data = {
-        "text": texto,
-        "model_id": "eleven_turbo_v2_5",
-        "voice_settings": {
-            "stability": 0.9,
-            "similarity_boost": 0.8
-        }
-    }
-    
-    response = requests.post(url, json=data, headers=headers)
-    if response.status_code == 200:
+def generar_audio_elevenlabs_sdk(texto, voice_id="1BxAZWANeDIxeyHKSJF2"):
+    try:
+        # Inicializa el cliente de ElevenLabs con la clave API
+        client = ElevenLabs(api_key=st.secrets["elevenlabs"]["api_key"])
+
+        # Generar el audio usando el SDK
+        audio_generator = client.text_to_speech.convert(
+            voice_id=voice_id,
+            model_id="eleven_turbo_v2_5",
+            text=texto,
+            voice_settings={
+                "stability": 1,
+                "similarity_boost": 1
+            }
+        )
+
+        # Guardar el audio en un archivo temporal
         temp_audio = tempfile.NamedTemporaryFile(delete=False, suffix=".mp3")
-        with open(temp_audio.name, "wb") as audio_file:
-            audio_file.write(response.content)
+        with open(temp_audio.name, "wb") as f:
+            for chunk in audio_generator:  # Iterar sobre el generador
+                f.write(chunk)
+
         return temp_audio.name
-    else:
-        st.error(f"Error al generar audio: {response.status_code}, {response.text}")
+
+    except Exception as e:
+        st.error(f"Error al generar audio: {e}")
         return None
 
 # Renderizar subtítulo dinámico basado en el tema seleccionado
@@ -145,7 +146,7 @@ if st.session_state.selected_topic:
         # Generar y reproducir audio
         if st.session_state.audio_enabled:
             # Limpiar el texto antes de enviarlo a Eleven Labs
-            texto_limpio = clean_message(response_content)
-            audio_path = generar_audio_elevenlabs(texto_limpio)
+            texto_limpio = clean_message_for_audio(response_content)
+            audio_path = generar_audio_elevenlabs_sdk(texto_limpio)
             if audio_path:
                 st.audio(audio_path, format="audio/mp3")
