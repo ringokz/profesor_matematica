@@ -3,4 +3,4 @@ openai
 Pillow==10.0.0
 xhtml2pdf
 emoji
-streamlit-chat-widget
+requests
