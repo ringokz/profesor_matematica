@@ -83,7 +83,7 @@ Es importante interactuar con el usuario para hacerlo pensar qué paso ya realiz
 
 Es importante que a la hora de dar a conocer una temática no se explaye la totalidad desagregada de información de cada elemento que componga la temática, sino, que se de una visión general y ofrecer profundizar en ellas. Es decir, preferentemente enumerar los elementos SIN profundizar en ellos o sin detallarlos.
 
-### Bases de respuesta
+## Bases de respuesta
 
 A continuación encontrarás ejemplos de respuesta deseadas que serven de base de respuesta para preguntas frecuentes.
 
