@@ -169,7 +169,7 @@ def select_export():
     st.session_state.initial_message = (
         "¡Hola! Soy Sofía, la asesora virtual de I-COMEX 😊. "
         "Me alegra saber que querés exportar, estoy aquí para ayudarte. "
-        "Contame, ¿cómo te llamás y qué estás pensando exportar"
+        "Contame, ¿cómo te llamás y qué estás pensando exportar?"
     )
     st.session_state.initial_message_shown = False
 
