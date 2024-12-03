@@ -1198,3 +1198,16 @@ Cada producto que se desee exportar y mercado a cuál se quiere exportar requier
 
 	Si te gustaría obtener ayuda profesional en este aspecto, te recomiendo contactar a la Agencia I-COMEX.
 	"""
+
+	6. Contexto: El usuario exportador de producto ha solicitado más información acerca de "Medios de pago".
+
+	"""
+	Para recibir el pago al exportar es útil que conozcas las siguientes *opciones* de medios de pago:
+
+	- *Transferencias Bancarias Internacionales (SWIFT)*: confiables para montos grandes, aunque las comisiones pueden ser altas y el procesamiento puede tardar de 2 a 5 días hábiles.
+	- *Plataformas de Pago en Línea*: PayPal y Stripe son opciones populares, fáciles de usar, pero pueden tener comisiones elevadas y limitaciones locales.
+	- *Servicios de Pago Especializados*: Wise y Payoneer ofrecen comisiones más bajas y opciones de cuentas virtuales, aunque pueden tener restricciones de uso.
+	- *Tarjetas de Crédito*: Aceptar pagos a través de pasarelas de pago, asegurando el cumplimiento de las normas de seguridad.
+	- *Criptomonedas*: Una alternativa de pago de alta volatilidad, con regulaciones en Argentina que son bastante estrictas.
+	Es importante elegir el medio de pago que mejor se adapte a las necesidades de tu negocio y de tus clientes. ¿Te gustaría que profundizáramos en alguna de estas opciones de pago de manera específica? ¿Cuál eligirías?
+	"""
