@@ -189,9 +189,6 @@ if st.session_state.selected_topic:
         st.session_state.messages.append({"role": "user", "content": prompt})
         frontend.render_chat_message("user", prompt, avatar=user_logo)
 
-        # Set the bot thinking state to True
-        st.session_state.is_thinking = True
-
         # OpenAI API call using the selected configuration
         client = OpenAI(api_key=st.secrets["openai"]["api_key"])
         response = client.chat.completions.create(
@@ -210,9 +207,6 @@ if st.session_state.selected_topic:
 
         frontend.render_dynamic_message(response_message, avatar=sofia_logo)
         st.session_state.rendered_message_ids.add(f"assistant-{len(st.session_state.messages) - 1}")
-
-        # Set the bot thinking state back to False
-        st.session_state.is_thinking = False
 
         # Generate and play audio if enabled
         if st.session_state.audio_enabled:

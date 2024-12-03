@@ -48,30 +48,22 @@ def generate_pdf(html_content, output_path):
     return True, None
 
 # Botón para activar/desactivar la generación de audio
-# Sidebar.py
 def toggle_audio_button():
-    # Initialize the audio_enabled state if it doesn't exist
+    # Inicializar el estado si no existe
     if "audio_enabled" not in st.session_state:
         st.session_state.audio_enabled = False
 
-    # Check if the bot is currently "thinking"
-    is_thinking = st.session_state.get("is_thinking", False)
-
-    # Button text
+    # Texto dinámico para el botón
     button_text = "Activar / Desactivar Audio"
 
-    # Render the button, disabling it if the bot is thinking
-    if st.button(button_text, disabled=is_thinking):
-        # Toggle the audio_enabled state if the button is clicked
+    # Renderizar el botón
+    if st.button(button_text):
+        # Cambiar el estado al presionar el botón
         st.session_state.audio_enabled = not st.session_state.audio_enabled
 
-    # Display the current status
+    # Mostrar el estado actual
     status = "activado" if st.session_state.audio_enabled else "desactivado"
     st.write(f"Audio **{status}**.")
-
-    # Optionally display a message indicating why the button is disabled
-    if is_thinking:
-        st.info("El bot está pensando. Por favor espera.")
 
 # Limpia un mensaje para asegurar que sea apto para texto a voz
 def clean_message_for_audio(message_content):
