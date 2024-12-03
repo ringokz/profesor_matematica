@@ -98,7 +98,7 @@ def render_title():
 # Renderizar subtítulo con efecto de escritura
 def render_subheader(topic):
     container = st.empty()  # Crear un contenedor vacío para el texto dinámico
-    text = topic.capitalize()
+    text = topic
     displayed_text = ""
     for char in text:
         displayed_text += char
@@ -144,7 +144,7 @@ def render_intro():
         )
     with btn_col2:
         st.button(
-            "**Exportación de Servicios**",
+            "**¡Quiero exportar!**",
             key="intro_comercio",
             on_click=select_export,  # Conecta el callback
             use_container_width=True,
@@ -165,11 +165,11 @@ def select_investment():
     st.session_state.initial_message_shown = False
 
 def select_export():
-    st.session_state.selected_topic = "Exportación de Servicios"
+    st.session_state.selected_topic = "¡Quiero exportar!"
     st.session_state.initial_message = (
         "¡Hola! Soy Sofía, la asesora virtual de I-COMEX 😊. "
-        "¿Estás planificando exportar tus servicios? "
-        "Contame cómo te puedo ayudar o que te gustaría saber."
+        "Me alegra saber que querés exportar, estoy aquí para ayudarte. "
+        "Contame, ¿cómo te llamás y qué estás pensando exportar?"
     )
     st.session_state.initial_message_shown = False
 

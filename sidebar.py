@@ -18,7 +18,7 @@ SOFIA_AVATAR_PATH = "logos/sofia_avatar.png"
 def load_instructions(topic):
     INSTRUCTIONS_FILES = {
         "Oportunidades de Inversión": "instructions_inversiones.txt",
-        "Exportación de Servicios": "instructions_comercio_exterior.txt",
+        "¡Quiero exportar!": "instructions_comercio_exterior.txt",
     }
     try:
         with open(INSTRUCTIONS_FILES[topic], "r", encoding="utf-8") as file:

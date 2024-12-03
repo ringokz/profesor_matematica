@@ -91,7 +91,7 @@ if st.session_state.selected_topic:
         frontend.render_subheader(st.session_state.selected_topic)
         st.session_state.subtitle_shown = True
     else:
-        st.subheader(st.session_state.selected_topic.capitalize())
+        st.subheader(st.session_state.selected_topic)
 
 # Renderizar la introducción y botones solo si no se ha seleccionado un tema
 if st.session_state.selected_topic is None:
@@ -122,30 +122,94 @@ if st.session_state.selected_topic:
                                              avatar=sofia_logo if message["role"] == "assistant" else user_logo)
 
     # Renderizar el campo de entrada
+    # if prompt := frontend.render_input():
+    #     st.session_state.messages.append({"role": "user", "content": prompt})
+    #     frontend.render_chat_message("user", prompt, avatar=user_logo)
+
+    #     client = OpenAI(api_key=st.secrets["openai"]["api_key"])
+    #     response = client.chat.completions.create(
+    #         model="gpt-4o-mini",
+    #         messages=st.session_state.messages,
+    #         temperature=0.3,       
+    #         top_p=0.1,             
+    #         frequency_penalty=0.2, 
+    #         presence_penalty=0.2   
+    #     )
+
+    #     response_content = response.choices[0].message.content
+    #     response_message = {"role": "assistant", "content": response_content}
+    #     st.session_state.messages.append(response_message)
+
+    #     # Renderizar el mensaje del chatbot
+    #     frontend.render_dynamic_message(response_message, avatar=sofia_logo)
+    #     st.session_state.rendered_message_ids.add(f"assistant-{len(st.session_state.messages) - 1}")
+
+    #     # Generar y reproducir audio
+    #     if st.session_state.audio_enabled:
+    #         # Limpiar el texto antes de enviarlo a Eleven Labs
+    #         texto_limpio = clean_message_for_audio(response_content)
+    #         audio_path = generar_audio_elevenlabs_sdk(texto_limpio)
+    #         if audio_path:
+    #             st.audio(audio_path, format="audio/mp3")
+
+    # Define settings for each topic
+    TOPIC_CONFIG = {
+        "¡Quiero exportar!": {
+            "model": "gpt-4o-mini",
+            "temperature": 0.3,
+            "top_p": 0.1,
+            "frequency_penalty": -0.5,
+            "presence_penalty": -0.5,
+        },
+        "Oportunidades de Inversión": {
+            "model": "gpt-4o-mini",
+            "temperature": 0.3,
+            "top_p": 0.1,
+            "frequency_penalty": 0.2,
+            "presence_penalty": 0.2,
+        },
+        "default": {
+            "model": "gpt-4o-mini",
+            "temperature": 0.3,
+            "top_p": 0.1,
+            "frequency_penalty": 0.2,
+            "presence_penalty": 0.2,
+        }
+    }
+
+    # Select configuration based on topic
+    selected_topic = st.session_state.selected_topic
+    if selected_topic in TOPIC_CONFIG:
+        config = TOPIC_CONFIG[selected_topic]
+    else:
+        config = TOPIC_CONFIG["default"]
+
+    # Render input and process response
     if prompt := frontend.render_input():
         st.session_state.messages.append({"role": "user", "content": prompt})
         frontend.render_chat_message("user", prompt, avatar=user_logo)
 
+        # OpenAI API call using the selected configuration
         client = OpenAI(api_key=st.secrets["openai"]["api_key"])
         response = client.chat.completions.create(
-            model="gpt-4o-mini",
+            model=config["model"],
             messages=st.session_state.messages,
-            temperature=0.3,       
-            top_p=0.1,             
-            frequency_penalty=0.2, 
-            presence_penalty=0.2   
+            temperature=config["temperature"],
+            top_p=config["top_p"],
+            frequency_penalty=config["frequency_penalty"],
+            presence_penalty=config["presence_penalty"],
         )
+
+        # Extract response content and render
         response_content = response.choices[0].message.content
         response_message = {"role": "assistant", "content": response_content}
         st.session_state.messages.append(response_message)
 
-        # Renderizar el mensaje del chatbot
         frontend.render_dynamic_message(response_message, avatar=sofia_logo)
         st.session_state.rendered_message_ids.add(f"assistant-{len(st.session_state.messages) - 1}")
 
-        # Generar y reproducir audio
+        # Generate and play audio if enabled
         if st.session_state.audio_enabled:
-            # Limpiar el texto antes de enviarlo a Eleven Labs
             texto_limpio = clean_message_for_audio(response_content)
             audio_path = generar_audio_elevenlabs_sdk(texto_limpio)
             if audio_path:
