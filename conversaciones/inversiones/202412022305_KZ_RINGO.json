@@ -1,0 +1,36 @@
+{
+    "name": "ringo",
+    "last_name": "kz",
+    "email": "ringodatascience@gmail.com",
+    "topic": "¡Quiero exportar!",
+    "messages": [
+        {
+            "role": "assistant",
+            "content": "¡Hola! Soy Sofía, la asesora virtual de I-COMEX 😊. Me alegra saber que querés exportar, estoy aquí para ayudarte. Contame, ¿cómo te llamás y qué estás pensando exportar?"
+        },
+        {
+            "role": "user",
+            "content": "me llamo lautaro, quiero exportar juguetes "
+        },
+        {
+            "role": "assistant",
+            "content": "¡Encantada de conocerte, Lautaro! 😊 Entonces, estamos hablando de una **exportación de productos**. \n\nPara comenzar, te puedo ofrecer información sobre varios aspectos importantes de la exportación de juguetes. Aquí te dejo algunas opciones para profundizar:\n\n- **¿Qué significa exportar y para qué sirve?**\n- **¿Qué necesito para exportar bienes?**\n- **INCOTERMS**\n- **Precio de exportación - Precio FOB**\n- **Barreras a la exportación**\n- **Selección de mercado**\n\n¿Te gustaría profundizar en alguno de estos temas?"
+        },
+        {
+            "role": "user",
+            "content": "Barreras a la exportación"
+        },
+        {
+            "role": "assistant",
+            "content": "Las \"barreras a la exportación\" son medidas que los países implementan para proteger sus economías. Estas tienen como objetivo proteger a la población en materia de salud, garantizando la calidad e inocuidad de los productos (por ejemplo, a través de certificados sanitarios), apoyar la producción nacional, resguardar la seguridad pública regulando o prohibiendo el ingreso de productos peligrosos, permitir la recaudación de ingresos para proyectos estatales e incentivar la producción nacional.\n\nLas barreras pueden ser **arancelarias** y **no arancelarias**. Algunos ejemplos de ellas son los **aranceles**, las **cuotas**, los **precios de referencia**, las **licencias de importación** y los **permisos sanitarios**, entre otros.\n\n¿Te gustaría profundizar en las **diferencias** entre las barreras arancelarias y no arancelarias? ¿O preferís saber **cómo identificar las barreras de tu producto**?"
+        },
+        {
+            "role": "user",
+            "content": "contame como identificar mis barreras"
+        },
+        {
+            "role": "user",
+            "content": "contame como identificar mis barreras"
+        }
+    ]
+}

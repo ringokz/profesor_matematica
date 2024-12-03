@@ -82,7 +82,7 @@ def clean_message_for_audio(message_content):
     # Remove all "#" characters
     message_content = message_content.replace("#", "")
     # Replace line breaks with spaces
-    message_content = message_content.replace(":", ".")
+    message_content = message_content.replace(":", "")
     return message_content
 
 # Limpia un mensaje para asegurar que sea apto para texto a voz
@@ -120,7 +120,7 @@ def save_conversation_form():
                     "messages": filtered_messages,
                 }
                 # Create folder if not exists
-                folder = "./conversaciones/comercio_exterior" if st.session_state.selected_topic == "Exportación de Servicios" else "./conversaciones/inversiones"
+                folder = "./conversaciones/comercio_exterior" if st.session_state.selected_topic == "¡Quiero exportar!" else "./conversaciones/inversiones"
                 os.makedirs(folder, exist_ok=True)
 
                 # Create file name with date and time
