@@ -160,7 +160,7 @@ def select_investment():
     st.session_state.initial_message = (
         "¡Hola! Soy Sofía, la asesora virtual de I-COMEX 😊. "
         "Parece que te interesan las oportunidades de inversión en La Pampa. "
-        "Decime, <b>¿cuál es tu nombre y qué aspecto en particular que quisieras saber?<b>"
+        "Decime, ¿cuál es tu nombre y qué aspecto en particular que quisieras saber?"
     )
     st.session_state.initial_message_shown = False
 
@@ -169,7 +169,7 @@ def select_export():
     st.session_state.initial_message = (
         "¡Hola! Soy Sofía, la asesora virtual de I-COMEX 😊. "
         "Me alegra saber que querés exportar, estoy aquí para ayudarte. "
-        "Contame, <b>¿cómo te llamás y qué estás pensando exportar<b>"
+        "Contame, ¿cómo te llamás y qué estás pensando exportar"
     )
     st.session_state.initial_message_shown = False
 
