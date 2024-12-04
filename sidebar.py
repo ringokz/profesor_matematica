@@ -301,21 +301,92 @@ def save_conversation_form():
                     with open(json_path, "w", encoding="utf-8") as f:
                         json.dump(conversation_data, f, ensure_ascii=False, indent=4)
 
-                    # Create HTML content for PDF
+                    # Create HTML content for PDF with original format
                     html_content = f"""
                     <html>
-                    <head><title>Conversación</title></head>
+                    <head>
+                        <style>
+                            body {{
+                                font-family: Arial, sans-serif;
+                                line-height: 1.6;
+                                background-color: {BACKGROUND_COLOR};
+                                margin: 0;
+                                padding: 0;
+                                font-size: 120%;
+                            }}
+                            .logos-container {{
+                                width: 100%;
+                                text-align: center;
+                                margin: 20px 0;
+                            }}
+                            .logos-container table {{
+                                margin: 0 auto;
+                                border-collapse: collapse;
+                            }}
+                            .logos-container img {{
+                                height: 60px;
+                                max-width: 150px;
+                                margin: 0 10px;
+                                object-fit: contain;
+                            }}
+                            .title-container h1 {{
+                                color: {PRIMARY_COLOR};
+                                font-size: 1.2rem;
+                                margin-top: 20px;
+                                margin-bottom: 20px;
+                                font-weight: bold;
+                            }}
+                            .title-container {{
+                                text-align: center;
+                                color: {PRIMARY_COLOR};
+                                font-size: 1.5rem;
+                                margin-top: 20px;
+                                margin-bottom: 20px;
+                                font-weight: bold;
+                            }}
+                            .content {{
+                                margin: 20px;
+                            }}
+                            .user {{
+                                color: {SECONDARY_COLOR};
+                                font-weight: bold;
+                            }}
+                            .assistant {{
+                                color: {PRIMARY_COLOR};
+                                font-weight: bold;
+                            }}
+                            .message {{
+                                margin-bottom: 1em;
+                            }}
+                        </style>
+                    </head>
                     <body>
-                        <h1>Conversación: {st.session_state.selected_topic}</h1>
-                        <p><b>Nombre:</b> {name.title()} {last_name.title()}</p>
-                        <p><b>Email:</b> {email}</p>
-                        <p><b>Fecha:</b> {argentina_time.strftime('%d/%m/%Y %H:%M')}</p>
-                        <h2>Mensajes</h2>
+                        <div class="logos-container">
+                            <table>
+                                <tr>
+                                    <td style="text-align: center; padding-left: 10px; padding-right: 10px;">
+                                        <img src="{SOFIA_AVATAR_PATH}" alt="SofIA Logo">
+                                        <img src="{ICOMEX_LOGO_PATH}" alt="ICOMEX Logo">
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="title-container">
+                            <h1>{st.session_state.selected_topic}</h1>
+                            <h1>Conversación de {name.title()} con SofIA</h1>
+                        </div>
+                        <div class="content">
+                            <p><b>Nombre completo:</b> {name.title()} {last_name.title()}</p>
+                            <p><b>Correo:</b> {email}</p>
+                            <p><b>Fecha:</b> {argentina_time.strftime("%H:%M hs %d/%m/%Y")}</p>
+                            <h2>Mensajes</h2>
                     """
                     for msg in filtered_messages:
                         role = name.title() if msg["role"] == "user" else "SofIA"
-                        html_content += f"<p><b>{role}:</b> {clean_message(msg['content'])}</p>"
-                    html_content += "</body></html>"
+                        color_class = "user" if msg["role"] == "user" else "assistant"
+                        html_content += f"<div class='message {color_class}'><b>{role}:</b> {clean_message(msg['content'])}</div>"
+
+                    html_content += "</div></body></html>"
 
                     # Save PDF locally
                     success, error = generate_pdf(html_content, pdf_path)
