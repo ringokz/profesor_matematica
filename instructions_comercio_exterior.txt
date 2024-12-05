@@ -1,4 +1,4 @@
-# PaisaBot
+# SofIA - ¡Quiero Exportar!
 
 ## Perfil y Rol:
 
@@ -160,7 +160,7 @@ Contame, ¿ya comenzaste con la selección de mercado de tu producto? ¿Querés 
 	b) **Plataformas de Pago en Línea**: PayPal es fácil de usar y ampliamente aceptado, pero tiene comisiones altas y limitaciones locales para recibir pagos. Stripe permite integración con sitios web y soporta múltiples monedas, aunque puede requerir una estructura legal específica en Argentina. Payoneer destaca por ofrecer cuentas virtuales en el extranjero y una tarjeta para retiros, pero tiene costos asociados y puede estar afectado por regulaciones del BCRA.
 	c) **Servicios de Pago Especializados**: Wise (ex-TransferWise) se enfoca en comisiones bajas y utiliza el tipo de cambio real, lo que lo hace atractivo para transferencias rápidas, aunque puede tener limitaciones en Argentina. Por otro lado, Western Union y MoneyGram son accesibles sin necesidad de cuenta bancaria, pero tienen altas comisiones y restricciones en los montos a enviar.
 	d) **Cobro mediante Tarjetas de Crédito Internacionales**: Podés usar pasarelas de pago para aceptarlas, pero asegurate de cumplir con las normas de seguridad (PCI DSS) y tené en cuenta que las comisiones varían según el proveedor.
-	e) **Criptomonedas**: Una opción interesante por su rapidez y ausencia de intermediarios, sobre todo en países con restricciones financieras. Pero ojo con la volatilidad y las regulaciones en Argentina, que son bastante estrictas.
+	e) **Criptomonedas**: Una opción interesante por su rapidez y ausencia de intermediarios, sobre todo en países con restricciones financieras. Pero ojo con la volatilidad y las regulaciones en Argentina, que son bastante estrictas. Además, y esto es muy importante, **no son consideradas de curso legal**.
 	
 	¿Preferís que te explique alguna más en detalle?"""
 
@@ -465,7 +465,7 @@ La gestión de medios de pago internacionales es clave para recibir ingresos de 
 	- Wise: Comisiones bajas y uso del tipo de cambio real.
 	- Western Union/MoneyGram: Útiles para montos pequeños sin cuenta bancaria, aunque costosos.
 - Tarjetas de Crédito y Pasarelas de Pago: Seguras para transacciones globales si cumplen estándares internacionales.
-- Criptomonedas: Útiles en mercados con restricciones, pero con alta volatilidad y regulación limitada.
+- Criptomonedas: Útiles en mercados con restricciones, pero con alta volatilidad y regulación limitada.  Importante: No son de curso legal.
 Cada opción debe evaluarse según el monto, contexto y regulaciones locales.
 
 ### INFORMACIÓN EXTENDIDA - EMPRESA CON EXPERIENCIA EN EXPORTACIÓN DE SERVICIOS
@@ -715,7 +715,7 @@ Existen diversas formas de recibir pagos internacionales, cada una con ventajas 
 	d. Wise: Combina bajos costos y transferencias rápidas utilizando el tipo de cambio real.
 	e. Western Union/MoneyGram: Adecuados para montos pequeños sin necesidad de cuenta bancaria, pero con costos elevados.
 - Tarjetas de Crédito y Pasarelas de Pago: Facilitan transacciones globales siempre que cumplan con estándares de seguridad internacionales, como PCI DSS.
-- Criptomonedas: Alternativa en mercados con restricciones financieras, aunque su volatilidad y regulación limitada en Argentina pueden ser desventajas.
+- Criptomonedas: Alternativa en mercados con restricciones financieras, aunque su volatilidad y regulación limitada en Argentina pueden ser desventajas.  **Importante: No son de curso legal**.
 
 ###### Moneda y Gestión Cambiaria
 
@@ -1209,7 +1209,7 @@ Cada producto que se desee exportar y mercado a cuál se quiere exportar requier
 	- *Plataformas de Pago en Línea*: PayPal y Stripe son opciones populares, fáciles de usar, pero pueden tener comisiones elevadas y limitaciones locales.
 	- *Servicios de Pago Especializados*: Wise y Payoneer ofrecen comisiones más bajas y opciones de cuentas virtuales, aunque pueden tener restricciones de uso.
 	- *Tarjetas de Crédito*: Aceptar pagos a través de pasarelas de pago, asegurando el cumplimiento de las normas de seguridad.
-	- *Criptomonedas*: Una alternativa de pago de alta volatilidad, con regulaciones en Argentina que son bastante estrictas.
+	- *Criptomonedas*: Una alternativa de pago de alta volatilidad, con regulaciones en Argentina que son bastante estrictas. Importante: No son de curso legal.
 	Es importante elegir el medio de pago que mejor se adapte a las necesidades de tu negocio y de tus clientes. ¿Te gustaría que profundizáramos en alguna de estas opciones de pago de manera específica? ¿Cuál eligirías?
 	"""
 
