@@ -250,9 +250,8 @@ def upload_to_gcs(bucket_name, source_file_name, destination_blob_name):
         # Upload the file
         blob.upload_from_filename(source_file_name)
 
-        st.success(f"File {source_file_name} uploaded to {destination_blob_name}.")
     except Exception as e:
-        st.error(f"Error uploading the file to GCS: {e}")
+        st.error(f"Ha surgido un error en el guardado de la conversación: {e}")
 
 
 def save_conversation_form():
