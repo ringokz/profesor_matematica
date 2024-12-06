@@ -8,6 +8,7 @@ import emoji
 import pytz
 from google.cloud import storage
 import tempfile
+import uuid
 
 # Configuración de la página
 PRIMARY_COLOR = "#4b83c0"
@@ -401,7 +402,7 @@ def save_conversation_form():
                     st.error(f"Se produjo un error: {e}")
             else:
                 st.error("Por favor complete todos los campos.")
-                
+
 def auto_save_conversation():
     """Automatically save the current conversation to GCS in auto-saved folder."""
     try:
@@ -417,7 +418,7 @@ def auto_save_conversation():
         }
 
         # Crear un nombre de archivo único
-        session_id = st.session_state.get("session_id", "default_session")
+        session_id = st.session_state.get("session_id", str(uuid.uuid4()))  # Genera un nuevo UUID en caso de fallback
         gcs_file_name = f"auto-saved/conversation_{session_id}.json"
 
         # Guardar el archivo temporalmente

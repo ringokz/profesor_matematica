@@ -6,6 +6,11 @@ import sidebar
 import tempfile
 from sidebar import clean_message_for_audio
 from elevenlabs import ElevenLabs
+import uuid
+
+# Generar un identificador único si no existe ya
+if "session_id" not in st.session_state:
+    st.session_state.session_id = str(uuid.uuid4())  # Genera un UUID único
 
 # Configuración de la página
 PRIMARY_COLOR = "#4b83c0"
