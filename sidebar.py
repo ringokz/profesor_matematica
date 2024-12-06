@@ -401,3 +401,39 @@ def save_conversation_form():
                     st.error(f"Se produjo un error: {e}")
             else:
                 st.error("Por favor complete todos los campos.")
+                
+def auto_save_conversation():
+    """Automatically save the current conversation to GCS in auto-saved folder."""
+    try:
+        # Filtrar mensajes
+        filtered_messages = [
+            msg for msg in st.session_state.messages if msg["role"] != "system"
+        ]
+
+        # Preparar datos para guardar en JSON
+        conversation_data = {
+            "topic": st.session_state.selected_topic,
+            "messages": filtered_messages,
+        }
+
+        # Crear un nombre de archivo único
+        session_id = st.session_state.get("session_id", "default_session")
+        gcs_file_name = f"auto-saved/conversation_{session_id}.json"
+
+        # Guardar el archivo temporalmente
+        temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".json")
+        with open(temp_file.name, "w", encoding="utf-8") as f:
+            json.dump(conversation_data, f, ensure_ascii=False, indent=4)
+
+        # Subir a GCS
+        upload_to_gcs(
+            bucket_name="sofia-asesora-virtual",
+            source_file_name=temp_file.name,
+            destination_blob_name=f"conversaciones/{gcs_file_name}",
+        )
+
+        # Confirmación de guardado
+        st.session_state.auto_saved = True
+
+    except Exception as e:
+        st.error(f"Error al guardar automáticamente la conversación: {e}")

@@ -185,11 +185,13 @@ if st.session_state.selected_topic:
         config = TOPIC_CONFIG["default"]
 
     # Render input and process response
+    # Render input and process response
     if prompt := frontend.render_input():
+        # Agregar mensaje del usuario al estado
         st.session_state.messages.append({"role": "user", "content": prompt})
         frontend.render_chat_message("user", prompt, avatar=user_logo)
 
-        # OpenAI API call using the selected configuration
+        # Llamada a la API de OpenAI para generar respuesta
         client = OpenAI(api_key=st.secrets["openai"]["api_key"])
         response = client.chat.completions.create(
             model=config["model"],
@@ -200,7 +202,7 @@ if st.session_state.selected_topic:
             presence_penalty=config["presence_penalty"],
         )
 
-        # Extract response content and render
+        # Extraer contenido de la respuesta y renderizarlo
         response_content = response.choices[0].message.content
         response_message = {"role": "assistant", "content": response_content}
         st.session_state.messages.append(response_message)
@@ -208,9 +210,12 @@ if st.session_state.selected_topic:
         frontend.render_dynamic_message(response_message, avatar=sofia_logo)
         st.session_state.rendered_message_ids.add(f"assistant-{len(st.session_state.messages) - 1}")
 
-        # Generate and play audio if enabled
+        # Generar y reproducir audio si está habilitado
         if st.session_state.audio_enabled:
             texto_limpio = clean_message_for_audio(response_content)
             audio_path = generar_audio_elevenlabs_sdk(texto_limpio)
             if audio_path:
                 st.audio(audio_path, format="audio/mp3")
+
+        # Guardar automáticamente la conversación en Google Cloud Storage
+        sidebar.auto_save_conversation()
