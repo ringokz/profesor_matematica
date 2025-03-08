@@ -3,3 +3,4 @@ primaryColor="#4b83c0"
 backgroundColor="#d8ddde"
 secondaryBackgroundColor="#ecefef"
 textColor="#000000"
+showSidebarNavigation = true
