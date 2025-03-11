@@ -65,7 +65,7 @@ def generar_pdf(messages):
 
     # Guardar el PDF en memoria
     pdf_output = BytesIO()
-    pdf_output.write(pdf.output(dest="S"))  # Asegurar codificación UTF-8
+    pdf_output.write(pdf.output(dest="B"))  # Asegurar codificación UTF-8
     pdf_output.seek(0)
     return pdf_output
 
