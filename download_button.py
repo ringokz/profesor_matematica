@@ -1,7 +1,8 @@
+import streamlit as st
 from io import BytesIO
 from fpdf import FPDF
-import streamlit as st
 import os
+import textwrap
 
 def generar_pdf(messages):
     pdf = FPDF()
@@ -19,10 +20,12 @@ def generar_pdf(messages):
             pdf.set_font("DejaVu", size=12)
             fuentes_cargadas = True
         except Exception as e:
-            st.warning(f"⚠️ Error cargando fuentes: {e}")
+            # Mostramos advertencia en Streamlit
+            pdf.cell(0, 10, txt=f"⚠️ Error cargando fuentes: {e}", ln=True)
+    else:
+        pdf.cell(0, 10, txt="⚠️ Usando Arial como predeterminado.", ln=True)
 
     if not fuentes_cargadas:
-        st.warning("⚠️ Usando Arial como predeterminado.")
         pdf.set_font("Arial", size=12)
 
     # Generar contenido del PDF (sin cambios)
@@ -32,11 +35,14 @@ def generar_pdf(messages):
     for message in messages:
         role = "Usuario" if message["role"] == "user" else "Profesor"
         pdf.set_font("DejaVu" if fuentes_cargadas else "Arial", style="B" if message["role"] == "user" else "", size=12)
-        pdf.multi_cell(0, 10, txt=f"{role}: {message['content']}")
+        # Para evitar que textos largos rompan la celda,
+        # envolvemos el contenido en líneas con un ancho máximo (por ejemplo, 80 caracteres)
+        wrapped_text = "\n".join(textwrap.wrap(f"{role}: {message['content']}", width=80))
+        pdf.multi_cell(0, 10, txt=wrapped_text)
 
     # Guardar el contenido del PDF como bytes en BytesIO
     pdf_output = BytesIO()
-    pdf_content = pdf.output(dest="S").encode("latin1")  # Dest="S" devuelve el contenido en bytes
+    pdf_content = pdf.output(dest="S")  # Ya es un objeto de bytes
     pdf_output.write(pdf_content)
     pdf_output.seek(0)  # Reiniciar el puntero al inicio del archivo
     return pdf_output
