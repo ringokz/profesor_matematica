@@ -5,10 +5,9 @@ import frontend
 import uuid
 import download_button
 
-
 # Configuración inicial
 st.set_page_config(
-    page_title="Albert - Asesor de Matemáticas",
+    page_title="Asistente de Matemáticas",
     layout="centered",
     page_icon="logs/front-log.webp"
 )
@@ -20,6 +19,8 @@ if "rendered_message_ids" not in st.session_state:
     st.session_state.rendered_message_ids = set()
 if "session_id" not in st.session_state:
     st.session_state.session_id = str(uuid.uuid4())
+if "chat_active" not in st.session_state:
+    st.session_state.chat_active = False  # Control del estado del chat
 
 # Cachear imágenes y textos
 @st.cache_data
@@ -36,67 +37,79 @@ MATH_INSTRUCTIONS = cargar_texto("math_instructions.md")
 PRELIMINARES_MATEMATICA = cargar_texto("preliminares_matematica.md")
 
 # Cargar avatares
-albert_logo = load_image("logs/agente-albert-avatar.png")
+front_logo = load_image("logs/front-log.png")
 user_logo = load_image("logs/user_avatar.png")
 
-# Mostrar el botón de descarga en la parte superior izquierda
-if "messages" in st.session_state and st.session_state.messages:
-    col1, col2 = st.columns([1, 4])
-    with col1:
-        download_button.renderizar_boton_descarga(st.session_state.messages)
-    with col2:
-        pass
-
+# Aplicar estilos personalizados
 frontend.render_custom_styles()
 frontend.render_title()
-frontend.render_intro()
 
-# Mostrar mensajes existentes
-for i, message in enumerate(st.session_state.messages):
-    message_id = f"{message['role']}-{i}"
-    if message_id not in st.session_state.rendered_message_ids:
-        avatar = albert_logo if message["role"] == "assistant" else user_logo
-        frontend.render_chat_message(message["role"], message["content"], avatar=avatar)
-        st.session_state.rendered_message_ids.add(message_id)
-
-
-def validar_respuesta_matematica(respuesta):
-    # Permitir respuestas no matemáticas
-    if "$" not in respuesta and "$$" not in respuesta:
-        return respuesta  # Respuesta no matemática permitida
-    return respuesta  # Formato válido
+# Si el chat no ha sido activado, mostrar el botón de inicio
+if not st.session_state.chat_active:
+    frontend.render_intro()
+    
+    if st.button("### Comenzar", key="start_button"):
+        st.session_state.chat_active = True
+        st.rerun()  # Corrección: Usar st.rerun() en lugar de st.experimental_rerun()
 
 
 
-# Input para enviar mensajes
-if prompt := st.chat_input("Escribe tu mensaje aquí..."):
-    # Mostrar y guardar el mensaje del usuario
-    st.session_state.messages.append({"role": "user", "content": prompt})
-    frontend.render_chat_message("user", prompt, avatar=user_logo)
+# Si el chat está activado, mostrar mensajes y permitir interacción
+if st.session_state.chat_active:
 
-    # Crear contexto inicial con instrucciones y contenido del libro
-    contexto_inicial = [
-        {"role": "system", "content": "Es OBLIGATORIO que EVITES utilizar texto plano para las operaciones matemáticas y SIEMPRE debas usar formato LaTeX. Por ejemplo, $x^2 + 2x + 1 = 0$. Devuelve las ecuaciones matemáticas según las reglas establecidas."},
-        {"role": "system", "content": MATH_INSTRUCTIONS},
-        {"role": "assistant", "content": PRELIMINARES_MATEMATICA},
-    ]
+    st.markdown(f"""<b>¡Bienvenido! Escribe tu primera pregunta</B>""",
+        unsafe_allow_html=True)
 
-    # Combinar contexto inicial con los mensajes previos
-    mensajes_completos = contexto_inicial + st.session_state.messages
+    # Mostrar botón de descarga si hay mensajes previos
+    if st.session_state.messages:
+        with st.sidebar:
+            st.markdown("### Guardar conversación")
+            download_button.renderizar_boton_descarga(st.session_state.messages)
 
-    # Obtener respuesta del asistente
-    client = OpenAI(api_key=st.secrets["openai"]["api_key"])
-    response = client.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=mensajes_completos,
-        temperature=0.3,
-        top_p=0.1,
-        frequency_penalty=0.2,
-        presence_penalty=0.2,
-    )
-    response_content = validar_respuesta_matematica(response.choices[0].message.content)
+    # Renderizar mensajes anteriores y nuevos
+    for i, message in enumerate(st.session_state.messages):
+        message_id = f"{message['role']}-{i}"
+        if message_id not in st.session_state.rendered_message_ids:
+            avatar = front_logo if message["role"] == "assistant" else user_logo
+            frontend.render_chat_message(message["role"], message["content"], avatar=avatar)
+            st.session_state.rendered_message_ids.add(message_id)
 
-    # Mostrar y guardar la respuesta del asistente
-    assistant_message = {"role": "assistant", "content": response_content}
-    st.session_state.messages.append(assistant_message)
-    frontend.render_dynamic_message(assistant_message, avatar=albert_logo)
+    def validar_respuesta_matematica(respuesta):
+        # Permitir respuestas no matemáticas
+        if "$" not in respuesta and "$$" not in respuesta:
+            return respuesta  # Respuesta no matemática permitida
+        return respuesta  # Formato válido
+
+    # Input para enviar mensajes (solo aparece después de hacer clic en "Comenzar")
+    if prompt := st.chat_input("Escribe tu mensaje aquí..."):
+        # Guardar el mensaje del usuario en la sesión y mostrarlo
+        user_message = {"role": "user", "content": prompt}
+        st.session_state.messages.append(user_message)
+        frontend.render_chat_message("user", prompt, avatar=user_logo)
+
+        # Crear contexto inicial con instrucciones y contenido del libro
+        contexto_inicial = [
+            {"role": "system", "content": "Es OBLIGATORIO que EVITES utilizar texto plano para las operaciones matemáticas, hasta en las operaciones matemáticas que escribas en texto plano y SIEMPRE debas usar formato LaTeX. Por ejemplo, $x^2 + 2x + 1 = 0$. Devuelve las ecuaciones matemáticas según las reglas establecidas."},
+            {"role": "system", "content": MATH_INSTRUCTIONS},
+            {"role": "assistant", "content": PRELIMINARES_MATEMATICA},
+        ]
+
+        # Combinar contexto inicial con los mensajes previos
+        mensajes_completos = contexto_inicial + st.session_state.messages
+
+        # Obtener respuesta del asistente
+        client = OpenAI(api_key=st.secrets["openai"]["api_key"])
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=mensajes_completos,
+            temperature=0.3,
+            top_p=0.1,
+            frequency_penalty=0.2,
+            presence_penalty=0.2,
+        )
+        response_content = validar_respuesta_matematica(response.choices[0].message.content)
+
+        # Guardar y mostrar la respuesta del asistente
+        assistant_message = {"role": "assistant", "content": response_content}
+        st.session_state.messages.append(assistant_message)
+        frontend.render_chat_message("assistant", response_content, avatar=front_logo)

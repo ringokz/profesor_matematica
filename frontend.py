@@ -1,17 +1,14 @@
 import streamlit as st
-import time
 
-
-# Paleta de colores y rutas de los logos
+# Colores y logos
 PRIMARY_COLOR = "#4b83c0"
 SECONDARY_COLOR = "#878889"
 BACKGROUND_COLOR = "#f4f5f7"
 
 FRONT_LOGO_PATH = "logs/front-log.webp"
-ALBERT_LOGO_PATH = "logs/agente-albert.webp"
-CLASES_PARTICULARES_LOGO = "logs/clases-particulares-logo.webp"
+CLASES_PARTICULARES_PATH = "logs/clases-particulares-la-pampa.webp"
 
-# Estilo personalizado
+# Estilos personalizados
 def render_custom_styles():
     st.markdown(
         f"""
@@ -19,129 +16,83 @@ def render_custom_styles():
             .stApp {{
                 background-color: {BACKGROUND_COLOR};
             }}
-            .stSidebar {{
-                background-color: #f0f0f0;
-                border-right: 1px solid {SECONDARY_COLOR};
-            }}
-            input, textarea {{
-                border: 1px solid {SECONDARY_COLOR};
-                border-radius: 5px;
-                padding: 8px;
-            }}
-            .title {{
-                color: {PRIMARY_COLOR};
-                font-size: 2.5rem;
-                font-weight: bold;
-                margin-bottom: 0rem;
-                margin-top: 0rem
-            }}
-            .space {{
-                margin-bottom: 8rem;
-            }}
-            .intro-text {{
-                font-size: 1.35rem;
-                line-height: 1.6;
-                margin-bottom: 0rem;
-                text-align: justify;
-            }}
-            .intro-question {{
-                font-size: 1.5rem;
-                font-weight: bold;
-                text-align: center;
-                margin-bottom: 1rem;
-            }}
             .stButton>button {{
                 background-color: {SECONDARY_COLOR};
                 color: white;
+                font-size: 20px;
+                font-weight: bold;
+                padding: 15px 30px;
                 border: none;
                 border-radius: 10px;
-                padding: 12px 24px;
-                font-size: 30px !important;
                 transition: background-color 0.3s ease;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                width: 200px;
+                margin: auto;
             }}
             .stButton>button:hover {{
                 background-color: {PRIMARY_COLOR};
                 color: white;
             }}
-            .button-container {{
-                display: flex;
-                justify-content: center;
-                gap: 1.5rem;
-                margin-top: 2rem;
+            .title {{
+                text-align: start;
+                color: {PRIMARY_COLOR};
+                font-size: 2.5rem;
+                font-weight: bold;
+                margin-bottom: 1rem;
+            }}
+            .intro-text {{
+                font-size: 1.35rem;
+                text-align: start;
+                margin-bottom: 1.5rem;
+            }}
+            .intro-question {{
+                font-size: 1.5rem;
+                font-weight: bold;
+                text-align: center;
+                margin-bottom: 2rem;
+            }}
+            .welcome-message{{
+                font-size: 3rem;
+                font-weight: normal;
+                text-align: start;
+                color: #333;
+                margin-top: 10px;
             }}
         </style>
         """,
         unsafe_allow_html=True,
     )
 
-# Renderizar el título con logos
+# Renderizar título
 def render_title():
+    st.image(CLASES_PARTICULARES_PATH, use_container_width=True)
     st.markdown(
-        '<div class="space"></div>',
-        unsafe_allow_html=True
-    )
-    logo_col1, logo_col2 = st.columns([1, 2.3], gap="medium")
-    with logo_col1:
-        st.image(ALBERT_LOGO_PATH, use_container_width=True)
-    with logo_col2:
-        st.image(CLASES_PARTICULARES_LOGO, use_container_width=True)
-        
-    st.markdown(
-        '<div class="title">Albert, asesor Matemático</div>',
-        unsafe_allow_html=True,
-    )
+        '<div class="title">Profesor de Matemáticas</div>', 
+        unsafe_allow_html=True)
 
-# Renderizar subtítulo con efecto de escritura
-def render_subheader(topic):
-    container = st.empty()
-    displayed_text = ""
-    for char in topic:
-        displayed_text += char
-        container.subheader(displayed_text)
-        time.sleep(0.01)
-
-# Renderizar la introducción y los botones iniciales
+# Renderizar introducción con botón "Comenzar"
 def render_intro():
     st.markdown(
         """
         <div class="intro-text">
-        Soy <b>Albert</b>, asesor virtual de <b>Clases Particulares La Pampa</b>.<br>
-        Estoy aquí para ayudarte en todas tus consultas matemáticas.
+        Soy <b>el profesor de Clases Particulares La Pampa</b>.
+        Estoy aquí para ayudarte en todas tus consultas.
         </div>
         <div class="intro-question">
-        <br/>
-        ¿Qué tema quieres tratar hoy?
+        <b>¿Sobre qué tema puedo ser de ayuda?</b>
         </div>
         """,
         unsafe_allow_html=True,
     )
 
-# Campo de entrada del usuario
-def render_input():
-    return st.chat_input("Escribe tu mensaje aquí...")
-
-# Renderizar mensaje dinámico con efecto de escritura
-def render_dynamic_message(message, avatar=None):
-    if message["role"] == "assistant":
-        with st.chat_message(message["role"], avatar=avatar):
-            container = st.empty()
-            displayed_text = ""
-            for char in message["content"]:
-                displayed_text += char
-                # Detectar contenido LaTeX y mostrar con formato matemático
-                if "$$" in displayed_text or "$" in displayed_text:
-                    container.markdown(displayed_text, unsafe_allow_html=True)
-                else:
-                    container.markdown(displayed_text)
-                time.sleep(0.0005)
-
-
-# Renderizar mensaje estático sin efecto
+# Función para mostrar mensajes en el chat
 def render_chat_message(role, content, avatar=None):
     with st.chat_message(role, avatar=avatar):
-        # Detectar expresiones LaTeX y renderizarlas correctamente
-        if "$$" in content or "$" in content:
-            st.markdown(content, unsafe_allow_html=True)
-        else:
-            st.markdown(content)
+        st.markdown(content)
 
+# Función para iniciar el chat al presionar el botón "Comenzar"
+def start_chat():
+    st.session_state.chat_active = True
+    st.rerun() 
