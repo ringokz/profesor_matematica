@@ -37,7 +37,7 @@ MATH_INSTRUCTIONS = cargar_texto("math_instructions.md")
 PRELIMINARES_MATEMATICA = cargar_texto("preliminares_matematica.md")
 
 # Cargar avatares
-front_logo = load_image("logs/front-log.png")
+front_logo = load_image("logs/front-log.webp")
 user_logo = load_image("logs/user_avatar.png")
 
 # Aplicar estilos personalizados
