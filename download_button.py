@@ -3,16 +3,14 @@ from fpdf import FPDF
 import os
 import streamlit as st
 
-# Función para generar el archivo PDF
 def generar_pdf(messages):
     pdf = FPDF()
     pdf.add_page()
 
-    # Obtener rutas absolutas de las fuentes
+    # Rutas absolutas de las fuentes
     font_path = os.path.abspath("fonts/DejaVuSans.ttf")
     bold_font_path = os.path.abspath("fonts/DejaVuSans-Bold.ttf")
 
-    # Verificar si las fuentes existen antes de agregarlas
     fuentes_cargadas = False
     if os.path.exists(font_path) and os.path.exists(bold_font_path):
         try:
@@ -21,17 +19,17 @@ def generar_pdf(messages):
             pdf.set_font("DejaVu", size=12)
             fuentes_cargadas = True
         except Exception as e:
-            st.warning(f"⚠️ Error cargando fuentes personalizadas: {e}")
+            st.warning(f"⚠️ Error cargando fuentes: {e}")
 
     if not fuentes_cargadas:
-        st.warning("⚠️ Fuentes no encontradas. Usando Arial como predeterminado.")
+        st.warning("⚠️ Usando Arial como predeterminado.")
         pdf.set_font("Arial", size=12)
 
     # Logo
     logo_path = os.path.abspath("logs/front-log.png")
     if os.path.exists(logo_path):
         pdf.image(logo_path, x=10, y=8, w=30)
-    
+
     # Título
     pdf.set_font("DejaVu" if fuentes_cargadas else "Arial", style="BU", size=24)
     pdf.set_text_color(70, 130, 180)
@@ -60,16 +58,15 @@ def generar_pdf(messages):
         try:
             pdf.multi_cell(0, 10, txt=f"{role}: {message['content']}")
         except Exception as e:
-            st.error(f"Error procesando el mensaje: {e}")
-            pdf.multi_cell(0, 10, txt=f"{role}: [Mensaje no pudo ser procesado]")
+            st.error(f"Error procesando mensaje: {e}")
+            pdf.multi_cell(0, 10, txt=f"{role}: [No pudo ser procesado]")
 
-    # Guardar el PDF en memoria
+    # Escribir directamente al buffer en fpdf2
     pdf_output = BytesIO()
-    pdf_output.write(pdf.output(dest="B"))  # Asegurar codificación UTF-8
+    pdf.output(pdf_output)  # Escribe el contenido al objeto BytesIO
     pdf_output.seek(0)
     return pdf_output
 
-# Función para mostrar el botón de descarga
 def renderizar_boton_descarga(messages):
     pdf_buffer = generar_pdf(messages)
     st.sidebar.download_button(
