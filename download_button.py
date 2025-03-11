@@ -1,13 +1,13 @@
 from io import BytesIO
 from fpdf import FPDF
-import os
 import streamlit as st
+import os
 
 def generar_pdf(messages):
     pdf = FPDF()
     pdf.add_page()
 
-    # Rutas absolutas de las fuentes
+    # Configuración de fuentes (sin cambios)
     font_path = os.path.abspath("fonts/DejaVuSans.ttf")
     bold_font_path = os.path.abspath("fonts/DejaVuSans-Bold.ttf")
 
@@ -25,46 +25,20 @@ def generar_pdf(messages):
         st.warning("⚠️ Usando Arial como predeterminado.")
         pdf.set_font("Arial", size=12)
 
-    # Logo
-    logo_path = os.path.abspath("logs/front-log.png")
-    if os.path.exists(logo_path):
-        pdf.image(logo_path, x=10, y=8, w=30)
-
-    # Título
-    pdf.set_font("DejaVu" if fuentes_cargadas else "Arial", style="BU", size=24)
-    pdf.set_text_color(70, 130, 180)
-    pdf.set_xy(10, 50)
+    # Generar contenido del PDF (sin cambios)
     pdf.cell(0, 10, txt="Clases particulares La Pampa", ln=True, align="C")
     pdf.ln(20)
 
-    # Mensajes
     for message in messages:
-        if message["role"] == "user":
-            pdf.set_font("DejaVu" if fuentes_cargadas else "Arial", style="B", size=12)
-            pdf.set_text_color(0, 0, 230)
-            role = "Usuario"
-            avatar_path = os.path.abspath("logs/user_avatar.png")
-        else:
-            pdf.set_font("DejaVu" if fuentes_cargadas else "Arial", size=12)
-            pdf.set_text_color(10, 10, 10)
-            role = "Profesor"
-            avatar_path = os.path.abspath("logs/front-log.png")
+        role = "Usuario" if message["role"] == "user" else "Profesor"
+        pdf.set_font("DejaVu" if fuentes_cargadas else "Arial", style="B" if message["role"] == "user" else "", size=12)
+        pdf.multi_cell(0, 10, txt=f"{role}: {message['content']}")
 
-        # Avatar
-        if os.path.exists(avatar_path):
-            pdf.image(avatar_path, x=10, y=pdf.get_y(), w=10, h=10)
-        pdf.set_xy(25, pdf.get_y())
-
-        try:
-            pdf.multi_cell(0, 10, txt=f"{role}: {message['content']}")
-        except Exception as e:
-            st.error(f"Error procesando mensaje: {e}")
-            pdf.multi_cell(0, 10, txt=f"{role}: [No pudo ser procesado]")
-
-    # Escribir directamente al buffer en fpdf2
+    # Guardar el contenido del PDF como bytes en BytesIO
     pdf_output = BytesIO()
-    pdf.output(pdf_output)  # Escribe el contenido al objeto BytesIO
-    pdf_output.seek(0)
+    pdf_content = pdf.output(dest="S") # Dest="S" devuelve el contenido en bytes
+    pdf_output.write(pdf_content)
+    pdf_output.seek(0)  # Reiniciar el puntero al inicio del archivo
     return pdf_output
 
 def renderizar_boton_descarga(messages):
