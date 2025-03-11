@@ -40,7 +40,7 @@ def generar_pdf(messages):
         pdf.set_xy(25, pdf.get_y())
        
         try:
-            pdf.multi_cell(pdf.w - 40, 10, txt=f"{role}: {message['content']}")
+            pdf.multi_cell(pdf.w - 40, 10, txt=f"{role}: {message['content'][:1000]}") 
         except IndexError as e:
             print(f"Error procesando el mensaje: {message['content']} -> {e}")
             pdf.multi_cell(0, 10, txt=f"{role}: [Mensaje no pudo ser procesado]")
