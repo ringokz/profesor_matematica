@@ -36,7 +36,7 @@ def generar_pdf(messages):
 
     # Guardar el contenido del PDF como bytes en BytesIO
     pdf_output = BytesIO()
-    pdf_content = pdf.output(dest="S") # Dest="S" devuelve el contenido en bytes
+    pdf_content = pdf.output(dest="S").encode("latin1")  # Dest="S" devuelve el contenido en bytes
     pdf_output.write(pdf_content)
     pdf_output.seek(0)  # Reiniciar el puntero al inicio del archivo
     return pdf_output
