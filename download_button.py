@@ -1,5 +1,6 @@
 from io import BytesIO
 from fpdf import FPDF
+import os
 import streamlit as st
 
 # Función para generar el archivo PDF
@@ -7,16 +8,22 @@ def generar_pdf(messages):
     pdf = FPDF()
     pdf.add_page()
 
-    # Agregar la fuente personalizada (asegúrate que existan estos archivos)
-    pdf.add_font('DejaVu', '', 'fonts/DejaVuSans.ttf', uni=True)
-    pdf.add_font('DejaVu', 'B', 'fonts/DejaVuSans-Bold.ttf', uni=True)
+    # Verificar si las fuentes existen antes de agregarlas
+    font_path = "fonts/DejaVuSans.ttf"
+    bold_font_path = "fonts/DejaVuSans-Bold.ttf"
 
+    if os.path.exists(font_path) and os.path.exists(bold_font_path):
+        pdf.add_font('DejaVu', '', font_path, uni=True)
+        pdf.add_font('DejaVu', 'B', bold_font_path, uni=True)
+    else:
+        st.warning("⚠️ Fuentes no encontradas. Usando Arial como predeterminado.")
+        pdf.set_font("Arial", size=12)
 
     # Logo
     pdf.image("logs/front-log.png", x=10, y=8, w=30)
 
     # Título
-    pdf.set_font("DejaVu", style="BU", size=24)
+    pdf.set_font("Arial", style="BU", size=24)
     pdf.set_text_color(70, 130, 180)
     pdf.set_xy(10, 50)
     pdf.cell(0, 10, txt="Clases particulares La Pampa", ln=True, align="C")
@@ -25,12 +32,12 @@ def generar_pdf(messages):
     # Mensajes
     for message in messages:
         if message["role"] == "user":
-            pdf.set_font("DejaVu", style="B", size=12)
+            pdf.set_font("Arial", style="B", size=12)
             pdf.set_text_color(0, 0, 230)
             role = "Usuario"
             avatar_path = "logs/user_avatar.png"
         else:
-            pdf.set_font("DejaVu", size=12)
+            pdf.set_font("Arial", size=12)
             pdf.set_text_color(10, 10, 10)
             role = "Profesor"
             avatar_path = "logs/front-log.png"
@@ -40,15 +47,14 @@ def generar_pdf(messages):
         pdf.set_xy(25, pdf.get_y())
        
         try:
-            pdf.multi_cell(pdf.w - 40, 10, txt=f"{role}: {message['content'][:1000]}") 
-        except IndexError as e:
-            print(f"Error procesando el mensaje: {message['content']} -> {e}")
+            pdf.multi_cell(0, 10, txt=f"{role}: {message['content'][:1000]}")
+        except Exception as e:
+            st.error(f"Error procesando el mensaje: {e}")
             pdf.multi_cell(0, 10, txt=f"{role}: [Mensaje no pudo ser procesado]")
-            
-    # Guardar el PDF en memoria sin codificación extra
+
+    # Guardar el PDF en memoria
     pdf_output = BytesIO()
-    pdf_bytes = pdf.output(dest="S")  # Codificación compatible con Unicode
-    pdf_output.write(pdf_bytes)
+    pdf_output.write(pdf.output(dest="S"))  # Usar encoding compatible
     pdf_output.seek(0)
     return pdf_output
 
